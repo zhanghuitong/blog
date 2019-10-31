@@ -340,61 +340,14 @@
 
       
         
-          
-            <h1 id="ArrayList-源码解析"><a href="#ArrayList-源码解析" class="headerlink" title="ArrayList 源码解析"></a>ArrayList 源码解析</h1><blockquote>
-<p>ArrayList 实现了RandomAccess 所以拥有随机访问</p>
-</blockquote>
-<p>这篇文章的源码基于JDK1.8</p>
-<h2 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h2><ol>
-<li><p>默认容量大小</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private static final int DEFAULT_CAPACITY = 10;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>底层构成<br>ArrayList 的 底层是一个 <code>Objecet []</code> </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private static final Object[] EMPTY_ELEMENTDATA = &#123;&#125;;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>修改的标志</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">protected transient int modCount = 0;</span><br></pre></td></tr></table></figure>
-
-<p>关于这个标志,在调用ArrayList的<code>add()</code> 和 <code>remove()</code>方法时,每次都会将modCount增加1<br>在进行迭代时对List的进行以上操作时,迭代器会抛出<br><code>ConcurrentModificationExceptions</code></p>
-</li>
-</ol>
-<h2 id="构造器方法"><a href="#构造器方法" class="headerlink" title="构造器方法"></a>构造器方法</h2><h2 id="常用的一些方法解析"><a href="#常用的一些方法解析" class="headerlink" title="常用的一些方法解析"></a>常用的一些方法解析</h2><ol>
-<li>add() (也是主要的方法))<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public boolean add(E e) &#123;</span><br><span class="line">     modCount++;</span><br><span class="line">     add(e, elementData, size);</span><br><span class="line">     return true;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<p>add(E e)方法中首先是使 <code>modcount</code> 这个修改次数先增加1,然后执行真正的增加方法.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">private void add(E e, Object[] elementData, int s) &#123;</span><br><span class="line">       if (s == elementData.length)</span><br><span class="line">           elementData = grow();</span><br><span class="line">       elementData[s] = e;</span><br><span class="line">       size = s + 1;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-
-<p>在插入数据时会先判断容器的大小，是否能容纳加进来的那个数据，如果当前的容器的大小已经达到最大，就会调用  <code>grow()</code>这个扩容的方法</p>
-<p>grow() </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private Object[] grow(int minCapacity) &#123;</span><br><span class="line">    int oldCapacity = elementData.length;</span><br><span class="line">    if (oldCapacity &gt; 0 || elementData !=DEFAULTCAPACITY_EMPTY_ELEMENTDATA) &#123;</span><br><span class="line">        int newCapacity = ArraysSupport.newLength(oldCapacity,</span><br><span class="line">                minCapacity - oldCapacity, /* minimum growth */</span><br><span class="line">                oldCapacity &gt;&gt; 1           /* preferred growth */);</span><br><span class="line">        return elementData = Arrays.copyOf(elementData, newCapacity);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        return elementData = new Object[Math.max(DEFAULT_CAPACITY, minCapacity)];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这里插入一个移位运算的知识</p>
-<p><code>&gt;&gt;</code> 1 是指在二进制中右移一位运算,相当于除以2</p>
-<p><code>&lt;&lt;</code> 1 是指在二进制运算中左移一位,相当于乘以2</p>
-<p>由此可知,ArrayList在这里的扩容中扩大了1/2的容量,<br>获取到扩容之后的数量之后,需要把原来的数组通过<code>Arrays.copyOf()</code>复制到一个新的组数</p>
-<ol start="2">
-<li>remove()<br>移除ArrayList中特定位置的元素</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public E remove(int index) &#123;</span><br><span class="line">      Objects.checkIndex(index, size);</span><br><span class="line">      final Object[] es = elementData;</span><br><span class="line"></span><br><span class="line">      @SuppressWarnings(&quot;unchecked&quot;) E oldValue = (E) es[index];</span><br><span class="line">      fastRemove(es, index);</span><br><span class="line">      </span><br><span class="line">      return oldValue;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-
-<p>先会调用checkIndex检查相应的位置是否存在元素,或者index是否有越界,有错的话就会抛出 <code>outOfBoundsCheckIndex</code></p>
-<p>然后调用<code>fastRemove()</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">private void fastRemove(Object[] es, int i) &#123;</span><br><span class="line">    modCount++;</span><br><span class="line">    final int newSize;</span><br><span class="line">    if ((newSize = size - 1) &gt; i)</span><br><span class="line">        System.arraycopy(es, i + 1, es, i, newSize - i);</span><br><span class="line">    es[size = newSize] = null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public static native void arraycopy(Object src,  int  srcPos,</span><br><span class="line">                                      Object dest, int destPos,</span><br><span class="line">                                      int length);</span><br></pre></td></tr></table></figure>
-
-<p>修改size的大小后,利用arrayCopy复制数组,作为数组的位置前移</p>
-<ol start="4">
-<li>indexOf()<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public int indexOf(Object o) &#123;</span><br><span class="line">    return indexOfRange(o, 0, size);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int indexOfRange(Object o, int start, int end) &#123;</span><br><span class="line">    Object[] es = elementData;</span><br><span class="line">    if (o == null) &#123;</span><br><span class="line">        for (int i = start; i &lt; end; i++) &#123;</span><br><span class="line">            if (es[i] == null) &#123;</span><br><span class="line">                return i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        for (int i = start; i &lt; end; i++) &#123;</span><br><span class="line">            if (o.equals(es[i])) &#123;</span><br><span class="line">                return i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return -1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<p>因为ArrayList的底层是数组,所以在查找元素只能通过遍历整个ArrayList来进行查找,时间复杂度为O(n),</p>
-<p>contain()方法也是如此,调用了indexOf()进行查找,这里就不再赘述了</p>
-
-          
+          <p>对JDK中的ArrayList源码的常用方法做浅要的解析</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/blog/2019/10/26/ArrayList源码解析/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
