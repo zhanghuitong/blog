@@ -83,11 +83,11 @@
 <meta name="keywords" content="JDK 源码">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ArrayList源码解析">
-<meta property="og:url" content="https://zhanghuitong.github.io/blog/2019/10/26/ArrayList源码解析/index.html">
+<meta property="og:url" content="http://blog.geek-pi.com/2019/10/26/ArrayList源码解析/index.html">
 <meta property="og:site_name" content="kolins&#39;s blog">
 <meta property="og:description" content="对JDK中的ArrayList源码的常用方法做浅要的解析">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-10-31T15:53:52.760Z">
+<meta property="og:updated_time" content="2019-10-31T15:56:43.912Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ArrayList源码解析">
 <meta name="twitter:description" content="对JDK中的ArrayList源码的常用方法做浅要的解析">
@@ -120,7 +120,7 @@
 
 
 
-  <link rel="canonical" href="https://zhanghuitong.github.io/blog/2019/10/26/ArrayList源码解析/">
+  <link rel="canonical" href="http://blog.geek-pi.com/2019/10/26/ArrayList源码解析/">
 
 
 
@@ -263,7 +263,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://zhanghuitong.github.io/blog/blog/2019/10/26/ArrayList源码解析/">
+    <link itemprop="mainEntityOfPage" href="http://blog.geek-pi.com/blog/2019/10/26/ArrayList源码解析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kolins">
@@ -358,7 +358,7 @@
 <li><p>修改的标志</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">protected transient int modCount = 0;</span><br></pre></td></tr></table></figure>
 
-<p>关于这个标志,在调用ArrayList的<code>add()</code> 和 <code>remove()</code>方法时,每次都会将modCount增加1<br>在进行迭代时对List的进行以上操作时,迭代器会抛出<br><code>ConcurrentModificationExceptions</code></p>
+<p>关于这个标志,在调用ArrayList的<code>add()</code> 和 <code>remove()</code>方法时,每次都会将modCount增加1<br>在进行forEach时对List的进行以上操作时,迭代器会抛出<br><code>ConcurrentModificationExceptions</code></p>
 </li>
 </ol>
 <h2 id="构造器方法"><a href="#构造器方法" class="headerlink" title="构造器方法"></a>构造器方法</h2><h2 id="常用的一些方法解析"><a href="#常用的一些方法解析" class="headerlink" title="常用的一些方法解析"></a>常用的一些方法解析</h2><ol>
@@ -436,6 +436,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/blog/2019/11/01/HashMap源码解析/" rel="prev" title="HashMap源码解析">
+                HashMap源码解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -511,7 +515,7 @@
               
                 <a href="/blog/archives/">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -598,7 +602,7 @@
       <div class="footer-inner">
         <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
 </script>
-<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+<div class="copyright">&copy; 2019 &mdash; <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
